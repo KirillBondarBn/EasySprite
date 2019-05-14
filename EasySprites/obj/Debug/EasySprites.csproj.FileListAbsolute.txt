@@ -1,0 +1,10 @@
+C:\Users\Кирилл\source\repos\EasySprites\EasySprites\bin\Debug\EasySprites.exe.config
+C:\Users\Кирилл\source\repos\EasySprites\EasySprites\bin\Debug\EasySprites.exe
+C:\Users\Кирилл\source\repos\EasySprites\EasySprites\bin\Debug\EasySprites.pdb
+C:\Users\Кирилл\source\repos\EasySprites\EasySprites\obj\Debug\EasySprites.csprojAssemblyReference.cache
+C:\Users\Кирилл\source\repos\EasySprites\EasySprites\obj\Debug\EasySprites.Form1.resources
+C:\Users\Кирилл\source\repos\EasySprites\EasySprites\obj\Debug\EasySprites.Properties.Resources.resources
+C:\Users\Кирилл\source\repos\EasySprites\EasySprites\obj\Debug\EasySprites.csproj.GenerateResource.cache
+C:\Users\Кирилл\source\repos\EasySprites\EasySprites\obj\Debug\EasySprites.csproj.CoreCompileInputs.cache
+C:\Users\Кирилл\source\repos\EasySprites\EasySprites\obj\Debug\EasySprites.exe
+C:\Users\Кирилл\source\repos\EasySprites\EasySprites\obj\Debug\EasySprites.pdb
