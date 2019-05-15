@@ -89,5 +89,8 @@
   <ItemGroup>
     <None Include="Resources\refresh-button.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\eraser.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

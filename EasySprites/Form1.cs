@@ -18,7 +18,9 @@ namespace EasySprites
         Pen pen;
         Brush brush = new SolidBrush(Color.Black);
         int MouseX, MouseY;
-        bool draw = false;
+        bool draw = false, change = true;
+        string enabled = "pen";
+        int size = 15;
 
         public Form1()
         {
@@ -46,10 +48,16 @@ namespace EasySprites
             midGr = Graphics.FromImage(mainBmp);
             pen = new Pen(brush, 5);
 
+            textBox1.Text = mainColor.BackColor.R.ToString();
+            textBox2.Text = mainColor.BackColor.G.ToString();
+            textBox3.Text = mainColor.BackColor.B.ToString();
+
             this.BackColor = ColorTranslator.FromHtml("#202230");
 
             toolsBox.BackColor = ColorTranslator.FromHtml("#282a3b");
             ColorBox.BackColor = ColorTranslator.FromHtml("#282a3b");
+
+            button1.BackColor = ColorTranslator.FromHtml("#e41d23");
 
             menuStrip1.BackColor = ColorTranslator.FromHtml("#282a3b");
             fileToolStripMenuItem.BackColor = ColorTranslator.FromHtml("#282a3b");
@@ -64,6 +72,8 @@ namespace EasySprites
             trackBar1.BackColor = Color.FromArgb(255, 137, 63, 69);
             trackBar2.BackColor = Color.FromArgb(255, 59, 176, 143);
             trackBar3.BackColor = Color.FromArgb(255, 93, 118, 203);
+
+            trackBar3_Scroll(sender, e);
         }
 
 
@@ -80,21 +90,24 @@ namespace EasySprites
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
             int x, y;
-            brush = new SolidBrush(mainColor.BackColor);
-            if (MouseX >= (MousePosition.X - this.Location.X - mainImage.Location.X - 8) + 5 
-            ||  MouseX <= (MousePosition.X - this.Location.X - mainImage.Location.X - 8) - 5)
-                MouseX = MousePosition.X - this.Location.X - mainImage.Location.X - 8;
+            Color clr = Color.FromArgb(255, mainColor.BackColor.R, mainColor.BackColor.G, mainColor.BackColor.B);
+            brush = new SolidBrush(clr);
 
-            if (MouseY >= (MousePosition.Y - this.Location.Y - mainImage.Location.Y - 31) + 5
-            ||  MouseY <= (MousePosition.Y - this.Location.Y - mainImage.Location.Y - 31) - 5)
-                MouseY = MousePosition.Y - this.Location.Y - mainImage.Location.Y - 31;
+            if (MouseX >= (MousePosition.X - this.Location.X - mainImage.Location.X - 8) + 4)  MouseX -= 4;
+            if (MouseX <= (MousePosition.X - this.Location.X - mainImage.Location.X - 8) - 4)  MouseX += 4;
+            if (MouseY >= (MousePosition.Y - this.Location.Y - mainImage.Location.Y - 31) + 4) MouseY -= 4;
+            if (MouseY <= (MousePosition.Y - this.Location.Y - mainImage.Location.Y - 31) - 4) MouseY += 4;
 
             x = MouseX;
             y = MouseY;
 
             gr.Clear(Color.FromArgb(0, 0, 0, 0));
 
-            pen_Tool(brush, x, y);
+
+            switch (enabled)
+            {
+                case "pen": pen_Tool(brush, x, y); break;
+            }
 
             mainImage.Image = toolsBmp;
             mainImage.BackgroundImage = mainBmp;
@@ -105,14 +118,14 @@ namespace EasySprites
             pen = new Pen(Color.Black);
             if(draw)
             {
-                midGr.FillRectangle(brush, x, y, 15, 15);
-                gr.DrawRectangle(pen, x - 1, y - 1, 16, 16);
-                gr.FillRectangle(brush, x, y, 15, 15);
+                midGr.FillRectangle(brush, x, y, size, size);
+                gr.FillRectangle(brush, x, y, size, size);
+                gr.DrawRectangle(pen, x, y, size - 1, size - 1);
             }
             else
             {
-                gr.DrawRectangle(pen, x - 1, y - 1, 16, 16);
-                gr.FillRectangle(brush, x, y, 15, 15);
+                gr.FillRectangle(brush, x, y, size, size);
+                gr.DrawRectangle(pen, x, y, size - 1, size - 1);
             }
         }
 
@@ -123,8 +136,8 @@ namespace EasySprites
 
         private void mainImage_Click(object sender, EventArgs e)
         {
+
             int x, y;
-            brush = new SolidBrush(mainColor.BackColor);
             if (MouseX >= (MousePosition.X - this.Location.X - mainImage.Location.X - 8) + 5
             || MouseX <= (MousePosition.X - this.Location.X - mainImage.Location.X - 8) - 5)
                 MouseX = MousePosition.X - this.Location.X - mainImage.Location.X - 8;
@@ -138,7 +151,11 @@ namespace EasySprites
 
             gr.Clear(Color.FromArgb(0, 0, 0, 0));
 
-            pen_Tool(brush, x, y);
+            switch(enabled)
+            {
+                case "pen": pen_Tool(brush, x, y); break;
+            }
+
 
             mainImage.Image = toolsBmp;
             mainImage.BackgroundImage = mainBmp;
@@ -149,6 +166,18 @@ namespace EasySprites
             Color clr = secondColor.BackColor;
             secondColor.BackColor = mainColor.BackColor;
             mainColor.BackColor = clr;
+
+            change = false;
+            textBox1.Text = mainColor.BackColor.R.ToString();
+            textBox2.Text = mainColor.BackColor.G.ToString();
+            textBox3.Text = mainColor.BackColor.B.ToString();
+
+            trackBar1.Value = mainColor.BackColor.R;
+            trackBar2.Value = mainColor.BackColor.G;
+            trackBar3.Value = mainColor.BackColor.B;
+            change = true;
+
+            trackBar3_Scroll(sender, e);
         }
 
         private void mainColor_Click(object sender, EventArgs e)
@@ -171,38 +200,76 @@ namespace EasySprites
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            try
+            if(change)
             {
-                int num = Convert.ToInt32(textBox1.Text);
-                if (num > 255) textBox1.Text = "255";
-                trackBar1.Value = num;
-                trackBar3_Scroll(sender, e);
+                try
+                {
+                    int num = Convert.ToInt32(textBox1.Text);
+                    if (num > 255) textBox1.Text = "255";
+                    trackBar1.Value = num;
+                    trackBar3_Scroll(sender, e);
+                }
+                catch { }
             }
-            catch { }
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
-            try
+            if (change)
             {
-                int num = Convert.ToInt32(textBox2.Text);
-                if (num > 255) textBox2.Text = "255";
-                trackBar2.Value = num;
-                trackBar3_Scroll(sender, e);
+                try
+                {
+                    int num = Convert.ToInt32(textBox2.Text);
+                    if (num > 255) textBox2.Text = "255";
+                    trackBar2.Value = num;
+                    trackBar3_Scroll(sender, e);
+                }
+                catch { }
             }
-            catch { }
         }
 
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
-            try
+            if(change)
             {
-                int num = Convert.ToInt32(textBox3.Text);
-                if (num > 255) textBox2.Text = "255";
-                trackBar3.Value = num;
-                trackBar3_Scroll(sender, e);
+                try
+                {
+                    int num = Convert.ToInt32(textBox3.Text);
+                    if (num > 255) textBox2.Text = "255";
+                    trackBar3.Value = num;
+                    trackBar3_Scroll(sender, e);
+                }
+                catch { }
             }
-            catch { }
+        }
+        public void clearEnab()
+        {
+            penTool.BorderStyle = BorderStyle.None;
+            rubberTool.BorderStyle = BorderStyle.None;
+        }
+        private void penTool_MouseEnter(object sender, EventArgs e)
+        {
+            if(enabled != "pen")
+            {
+                clearEnab();
+                penTool.BorderStyle = BorderStyle.FixedSingle;
+            }
+        }
+
+        private void penTool_Click(object sender, EventArgs e)
+        {
+            enabled = "pen";
+            penTool.BorderStyle = BorderStyle.Fixed3D;
+        }
+
+        private void pictureBox3_Click(object sender, EventArgs e)
+        {
+            Control ctr = new Control(PictureBox);
+        }
+
+        private void penTool_MouseLeave(object sender, EventArgs e)
+        {
+            if (enabled != "pen") penTool.BorderStyle = BorderStyle.None;
         }
 
         private void mainImage_MouseDown(object sender, MouseEventArgs e)
